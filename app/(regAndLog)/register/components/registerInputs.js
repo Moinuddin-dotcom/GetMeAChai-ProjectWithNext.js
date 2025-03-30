@@ -1,5 +1,7 @@
 "use client"
+import { registerUser } from '@/app/auctions/auth/registerUser';
 import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 
 export default function RegisterInputs() {
     const {
@@ -8,8 +10,26 @@ export default function RegisterInputs() {
         formState: { errors },
     } = useForm();
 
-    const onSubmit = (data) => {
-        console.log("User Registered:", data);
+    const onSubmit = async (data) => {
+        try {
+            const res = await registerUser(data);
+            console.log("User Registered:", res);
+            if (res.insertedId) {
+                toast.success("User registered successfully", {
+                    duration: 2000,
+                    position: "top-right",
+                });
+
+            } else if (res.status === 400) {
+                toast.error(res.message, {
+                    duration: 2000,
+                    position: "top-right",
+                });
+
+            }
+        } catch (error) {
+            console.error("Registration failed:", error);
+        }
     };
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -17,7 +37,7 @@ export default function RegisterInputs() {
                 onSubmit={handleSubmit(onSubmit)}
                 className="bg-white p-6 rounded-lg shadow-lg w-96"
             >
-                <h2 className="text-xl font-bold mb-4">Register</h2>
+                <h2 className="text-xl text-center font-bold mb-4">Register</h2>
 
                 <label className="block mb-2">Name:</label>
                 <input
@@ -47,8 +67,9 @@ export default function RegisterInputs() {
 
                 <button
                     type="submit"
-                    className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+                    className="cursor-pointer text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 w-full "
                 >
+                    {/* w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 */}
                     Register
                 </button>
             </form>
